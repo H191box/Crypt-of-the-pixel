@@ -1,18 +1,14 @@
 # =============================================================================
-# Crypt of the Pixel — Isometric Roguelike Dungeon Crawler for GBA
-# Makefile for devkitARM toolchain
+# Crypt of the Pixel — GBA Makefile
 # =============================================================================
 
 # ---- Toolchain ----
-AS      = arm-none-eabi-as
-CC      = arm-none-eabi-gcc
-CXX     = arm-none-eabi-g++
-LD      = arm-none-eabi-gcc
-OBJCOPY = arm-none-eabi-objcopy
-
-# ---- devkitARM paths (override if needed) ----
-LIBGBA  ?= $(DEVKITPRO)/libgba
-LIBTONC ?= $(DEVKITPRO)/libtonc
+TOOLCHAIN = /tmp/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
+AS      = $(TOOLCHAIN)/bin/arm-none-eabi-as
+CC      = $(TOOLCHAIN)/bin/arm-none-eabi-gcc
+LD      = $(TOOLCHAIN)/bin/arm-none-eabi-gcc
+OBJCOPY = $(TOOLCHAIN)/bin/arm-none-eabi-objcopy
+OBJDUMP = $(TOOLCHAIN)/bin/arm-none-eabi-objdump
 
 # ---- Project dirs ----
 BUILD   = build
@@ -23,8 +19,10 @@ INCLUDE = include
 CFILES  := $(shell find $(SRC) -name '*.c')
 SFILES  := $(shell find $(SRC) -name '*.s')
 
-OFILES  := $(patsubst %.c,$(BUILD)/%.o,$(CFILES))
-OFILES  += $(patsubst %.s,$(BUILD)/%.o,$(SFILES))
+# ---- Object files: crt0.o MUST be first! ----
+OFILES  := $(BUILD)/src/main/crt0.o
+OFILES  += $(patsubst %.c,$(BUILD)/%.o,$(CFILES))
+OFILES  += $(filter-out $(BUILD)/src/main/crt0.o,$(patsubst %.s,$(BUILD)/%.o,$(SFILES)))
 
 # ---- Output ----
 TARGET  = crypt_of_the_pixel
@@ -43,7 +41,7 @@ CFLAGS += -DGBA
 
 ASFLAGS = -mthumb-interwork
 
-LDFLAGS = $(ARCH) -Wl,-Map,$(MAP) -Wl,--gc-sections
+LDFLAGS = $(ARCH) -Wl,-Map,$(MAP)
 LDFLAGS += -T gba.ld -nostartfiles -nostdlib
 
 # ---- Default target ----
@@ -54,13 +52,11 @@ $(ELF): $(OFILES)
 	@echo " Linking $@..."
 	$(LD) $(LDFLAGS) -o $@ $(OFILES)
 
-# ---- Build GBA ROM ----
+# ---- Build GBA ROM (only .text + .rodata + .data sections) ----
 $(GBA): $(ELF)
-	@echo " Building $@..."
-	$(OBJCOPY) -O binary $< $@
-	@echo " Fixing header..."
-	-@gbafix $@ -t"CryptPixel" -c"CTPX" -m00 -r00 2>/dev/null || true
-	@echo " Done! ROM: $@"
+	@echo " Building ROM..."
+	$(OBJCOPY) -O binary -j .text -j .rodata -j .data $< $@
+	@echo " ROM size:"
 	@ls -la $@
 
 # ---- Compile C ----
@@ -79,4 +75,11 @@ $(BUILD)/%.o: %.s
 clean:
 	rm -rf build
 
-.PHONY: all clean
+# ---- Debug helpers ----
+hexdump: $(GBA)
+	xxd $(GBA) | head -20
+
+disasm: $(ELF)
+	$(OBJDUMP) -d $(ELF) | head -100
+
+.PHONY: all clean hexdump disasm

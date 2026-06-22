@@ -37,7 +37,7 @@ static VBlankCallback s_vblank_cb = NULL;
  * Reads/clears interrupt flags and calls the user callback.
  * Placed in IWRAM for fast response.
  */
-void IWRAM_CODE irq_handler(void) {
+void irq_handler(void) {
     u16 irq_flags = REG_IF;
     
     /* Acknowledge all handled interrupts */

@@ -20,6 +20,7 @@
 #include "combat.h"
 #include "items.h"
 #include "hud.h"
+#include "timer.h"
 #include "game_state.h"
 
 /* Forward declarations */
