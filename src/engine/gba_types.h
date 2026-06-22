@@ -21,6 +21,11 @@ typedef signed int         s32;
 /* ---- Boolean type ---- */
 typedef enum { FALSE = 0, TRUE = 1 } bool;
 
+/* ---- NULL pointer constant (freestanding, no stddef.h) ---- */
+#ifndef NULL
+#define NULL ((void*)0)
+#endif
+
 /* ---- Void pointer type alias ---- */
 typedef void*              voidp;
 
