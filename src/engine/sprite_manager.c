@@ -68,10 +68,10 @@ s8 sprite_create(s16 x, s16 y, u8 tile_idx, SpriteShape shape,
             spr->depth = (u16)y;  /* Default depth = screen Y */
             
             /* Build OAM attributes */
-            /* Attr0: Y(8 bits), shape(2 bits at bits 14-13), no mosaic, no flip */
-            spr->attr0 = ((u16)y & 0xFF) | ((u16)shape << 14);
-            /* Attr1: X(9 bits at bits 8-0), size(2 bits at bits 14-13) */
-            spr->attr1 = ((u16)x & 0x1FF) | ((u16)size << 12);
+            /* Attr0: Y(8 bits) at 0-7, color_mode at bit 12, shape(2 bits) at bits 13-14 */
+            spr->attr0 = ((u16)y & 0xFF) | ((u16)shape << 13);
+            /* Attr1: X(9 bits) at 0-8, size(2 bits) at bits 13-14 */
+            spr->attr1 = ((u16)x & 0x1FF) | ((u16)size << 13);
             /* Attr2: tile(10 bits), priority(2 bits at 12-13), palette(4 bits at 12-15 for 16-color) */
             spr->attr2 = (u16)tile_idx | ((u16)priority << 10) | ((u16)palette << 12);
             

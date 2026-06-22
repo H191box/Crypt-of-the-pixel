@@ -184,22 +184,25 @@
 #define BG_SIZE_512x512         (3 << 14)
 
 /* Sprite attribute flags */
-#define OBJ_SHAPE_SQUARE        (0 << 14)
-#define OBJ_SHAPE_WIDE          (1 << 14)
-#define OBJ_SHAPE_TALL          (2 << 14)
+/* Attr0: Shape is at bits 13-14 */
+#define OBJ_SHAPE_SQUARE        (0 << 13)
+#define OBJ_SHAPE_WIDE          (1 << 13)
+#define OBJ_SHAPE_TALL          (2 << 13)
 
-#define OBJ_SIZE_8              (0 << 12)
-#define OBJ_SIZE_16             (1 << 12)
-#define OBJ_SIZE_32             (2 << 12)
-#define OBJ_SIZE_64             (3 << 12)
+/* Attr1 (non-affine): Size is at bits 13-14 */
+#define OBJ_SIZE_8              (0 << 13)
+#define OBJ_SIZE_16             (1 << 13)
+#define OBJ_SIZE_32             (2 << 13)
+#define OBJ_SIZE_64             (3 << 13)
 
-/* Sprite mode flags */
+/* Sprite mode flags (Attr0 bits 10-11) */
 #define OBJ_NORMAL              (0 << 10)
 #define OBJ_SEMI_TRANSPARENT    (1 << 10)
 #define OBJ_WINDOW              (2 << 10)
 
-#define OBJ_COLORS_16           (0 << 13)
-#define OBJ_COLORS_256          (1 << 13)
+/* Attr0: Color mode at bit 12 */
+#define OBJ_COLORS_16           (0 << 12)
+#define OBJ_COLORS_256          (1 << 12)
 
 /* ---- VRAM addresses ---- */
 #define VRAM        ((u16*)0x06000000)

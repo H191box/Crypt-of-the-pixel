@@ -116,7 +116,9 @@ void game_init(void) {
  * Main update loop.
  */
 void game_update(void) {
-    input_update();
+    /* NOTE: input_update() is called once per frame in main.c loop.
+     * Do NOT call it here — double-calling makes key_just_pressed()
+     * always return FALSE because the second call overwrites edge detection. */
     timer_update();
     
     s_anim_timer++;

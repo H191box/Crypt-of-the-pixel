@@ -137,4 +137,17 @@ void load_all_palettes(void) {
     for (int i = 0; i < PAL_UI_SIZE; i++) {
         PAL_BG[16 + i] = pal_ui[i];
     }
+    
+    /* ---- CRITICAL FIX: Copy font palette to ALL 16 palette banks ----
+     * The text renderer uses the TEXT_COLOR_x values (1..9) as palette
+     * bank numbers. If a bank is all-black, text in that color is
+     * invisible (black fg on black bg). We duplicate font_palette
+     * into every bank so any color index works.
+     * Bank 0 already has dungeon data (darker), but for text-only BG3
+     * the font palette is what matters. We override all 16 banks. */
+    for (int bank = 0; bank < 16; bank++) {
+        for (int c = 0; c < 16; c++) {
+            PAL_BG[bank * 16 + c] = font_palette[c];
+        }
+    }
 }

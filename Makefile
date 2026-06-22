@@ -41,7 +41,7 @@ CFLAGS += -ffreestanding -fno-builtin -fno-strict-aliasing
 CFLAGS += -fno-common -mlong-calls
 CFLAGS += -DGBA
 
-ASFLAGS = $(ARCH)
+ASFLAGS = -mthumb-interwork
 
 LDFLAGS = $(ARCH) -Wl,-Map,$(MAP) -Wl,--gc-sections
 LDFLAGS += -T gba.ld -nostartfiles -nostdlib
@@ -87,8 +87,17 @@ gba.ld:
 	@echo '}' >> gba.ld
 	@echo 'SECTIONS {' >> gba.ld
 	@echo '  .rom  0x08000000 : { *(.header) *(.text) *(.rodata) } > rom' >> gba.ld
-	@echo '  .data : { *(.data) } > ewram AT> rom' >> gba.ld
-	@echo '  .bss  : { *(.bss) *(COMMON) } > ewram' >> gba.ld
+	@echo '  .data : {' >> gba.ld
+	@echo '    __data_start = . ;' >> gba.ld
+	@echo '    *(.data)' >> gba.ld
+	@echo '    __data_end = . ;' >> gba.ld
+	@echo '  } > ewram AT> rom' >> gba.ld
+	@echo '  __data_load = LOADADDR(.data) ;' >> gba.ld
+	@echo '  .bss  : {' >> gba.ld
+	@echo '    __bss_start = . ;' >> gba.ld
+	@echo '    *(.bss) *(COMMON)' >> gba.ld
+	@echo '    __bss_end = . ;' >> gba.ld
+	@echo '  } > ewram' >> gba.ld
 	@echo '  .iwram : { *(.iwram) *(.iwram.*) } > iwram' >> gba.ld
 	@echo '  /DISCARD/ : { *(.ARM.attributes) }' >> gba.ld
 	@echo '}' >> gba.ld
