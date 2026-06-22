@@ -3,12 +3,11 @@
 # =============================================================================
 
 # ---- Toolchain ----
-TOOLCHAIN = /tmp/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi
-AS      = $(TOOLCHAIN)/bin/arm-none-eabi-as
-CC      = $(TOOLCHAIN)/bin/arm-none-eabi-gcc
-LD      = $(TOOLCHAIN)/bin/arm-none-eabi-gcc
-OBJCOPY = $(TOOLCHAIN)/bin/arm-none-eabi-objcopy
-OBJDUMP = $(TOOLCHAIN)/bin/arm-none-eabi-objdump
+AS      = arm-none-eabi-as
+CC      = arm-none-eabi-gcc
+LD      = arm-none-eabi-gcc
+OBJCOPY = arm-none-eabi-objcopy
+OBJDUMP = arm-none-eabi-objdump
 
 # ---- Project dirs ----
 BUILD   = build
