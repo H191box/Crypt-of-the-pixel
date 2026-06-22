@@ -51,32 +51,32 @@ all: $(GBA)
 
 # ---- Link ELF ----
 $(ELF): $(OFILES)
-        @echo " Linking $@..."
-        $(LD) $(LDFLAGS) -o $@ $(OFILES)
+	@echo " Linking $@..."
+	$(LD) $(LDFLAGS) -o $@ $(OFILES)
 
 # ---- Build GBA ROM ----
 $(GBA): $(ELF)
-        @echo " Building $@..."
-        $(OBJCOPY) -O binary $< $@
-        @echo " Fixing header..."
-        -@gbafix $@ -t"CryptPixel" -c"CTPX" -m00 -r00 2>/dev/null || true
-        @echo " Done! ROM: $@"
-        @ls -la $@
+	@echo " Building $@..."
+	$(OBJCOPY) -O binary $< $@
+	@echo " Fixing header..."
+	-@gbafix $@ -t"CryptPixel" -c"CTPX" -m00 -r00 2>/dev/null || true
+	@echo " Done! ROM: $@"
+	@ls -la $@
 
 # ---- Compile C ----
 $(BUILD)/%.o: %.c
-        @mkdir -p $(dir $@)
-        @echo " CC $<"
-        $(CC) $(CFLAGS) -c -o $@ $<
+	@mkdir -p $(dir $@)
+	@echo " CC $<"
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 # ---- Compile ASM ----
 $(BUILD)/%.o: %.s
-        @mkdir -p $(dir $@)
-        @echo " AS $<"
-        $(AS) $(ASFLAGS) -o $@ $<
+	@mkdir -p $(dir $@)
+	@echo " AS $<"
+	$(AS) $(ASFLAGS) -o $@ $<
 
 # ---- Clean ----
 clean:
-        rm -rf build
+	rm -rf build
 
 .PHONY: all clean
