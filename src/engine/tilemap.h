@@ -14,6 +14,7 @@
 #define TILEMAP_H
 
 #include "gba_types.h"
+#include "iso_math.h"  /* MAP_WIDTH, MAP_HEIGHT */
 
 /* ---- Tile IDs ---- */
 enum TileID {
