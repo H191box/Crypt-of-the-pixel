@@ -317,6 +317,7 @@ void load_all_tiles(void) {
     
     /* Generate proper isometric floor tiles at runtime */
     /* This creates proper diamond-shaped floor tiles in VRAM */
+    static void generate_isometric_tiles(void);
     generate_isometric_tiles();
 }
 
