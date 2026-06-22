@@ -51,62 +51,32 @@ all: $(GBA)
 
 # ---- Link ELF ----
 $(ELF): $(OFILES)
-	@echo " Linking $@..."
-	$(LD) $(LDFLAGS) -o $@ $(OFILES)
+        @echo " Linking $@..."
+        $(LD) $(LDFLAGS) -o $@ $(OFILES)
 
 # ---- Build GBA ROM ----
 $(GBA): $(ELF)
-	@echo " Building $@..."
-	$(OBJCOPY) -O binary $< $@
-	@echo " Fixing header..."
-	-@gbafix $@ -t"CryptPixel" -c"CTPX" -m00 -r00 2>/dev/null || true
-	@echo " Done! ROM: $@"
-	@ls -la $@
+        @echo " Building $@..."
+        $(OBJCOPY) -O binary $< $@
+        @echo " Fixing header..."
+        -@gbafix $@ -t"CryptPixel" -c"CTPX" -m00 -r00 2>/dev/null || true
+        @echo " Done! ROM: $@"
+        @ls -la $@
 
 # ---- Compile C ----
 $(BUILD)/%.o: %.c
-	@mkdir -p $(dir $@)
-	@echo " CC $<"
-	$(CC) $(CFLAGS) -c -o $@ $<
+        @mkdir -p $(dir $@)
+        @echo " CC $<"
+        $(CC) $(CFLAGS) -c -o $@ $<
 
 # ---- Compile ASM ----
 $(BUILD)/%.o: %.s
-	@mkdir -p $(dir $@)
-	@echo " AS $<"
-	$(AS) $(ASFLAGS) -o $@ $<
-
-# ---- GBA linker script (embedded) ----
-gba.ld:
-	@echo "Creating linker script..."
-	@echo 'OUTPUT_ARCH(arm)' > gba.ld
-	@echo 'ENTRY(_start)' >> gba.ld
-	@echo 'MEMORY {' >> gba.ld
-	@echo '  rom   : ORIGIN = 0x08000000, LENGTH = 32M' >> gba.ld
-	@echo '  ewram : ORIGIN = 0x02000000, LENGTH = 256K' >> gba.ld
-	@echo '  iwram : ORIGIN = 0x03000000, LENGTH = 32K' >> gba.ld
-	@echo '}' >> gba.ld
-	@echo 'SECTIONS {' >> gba.ld
-	@echo '  .rom  0x08000000 : { *(.header) *(.text) *(.rodata) } > rom' >> gba.ld
-	@echo '  .data : {' >> gba.ld
-	@echo '    __data_start = . ;' >> gba.ld
-	@echo '    *(.data)' >> gba.ld
-	@echo '    __data_end = . ;' >> gba.ld
-	@echo '  } > ewram AT> rom' >> gba.ld
-	@echo '  __data_load = LOADADDR(.data) ;' >> gba.ld
-	@echo '  .bss  : {' >> gba.ld
-	@echo '    __bss_start = . ;' >> gba.ld
-	@echo '    *(.bss) *(COMMON)' >> gba.ld
-	@echo '    __bss_end = . ;' >> gba.ld
-	@echo '  } > ewram' >> gba.ld
-	@echo '  .iwram : { *(.iwram) *(.iwram.*) } > iwram' >> gba.ld
-	@echo '  /DISCARD/ : { *(.ARM.attributes) }' >> gba.ld
-	@echo '}' >> gba.ld
-
-# ---- Linker script is a prerequisite ----
-$(OFILES): gba.ld
+        @mkdir -p $(dir $@)
+        @echo " AS $<"
+        $(AS) $(ASFLAGS) -o $@ $<
 
 # ---- Clean ----
 clean:
-	rm -rf $(BUILD)/*.o $(BUILD)/*.elf $(BUILD)/*.gba $(BUILD)/*.map
+        rm -rf build
 
 .PHONY: all clean
