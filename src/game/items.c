@@ -5,14 +5,10 @@
 #include "gba_types.h"
 #include "player.h"
 #include "items.h"
+#include "item_data.h"
 
 /* ---- Ground items ---- */
 static GroundItem s_ground[MAX_GROUND_ITEMS];
-
-/* ---- Item definitions ---- */
-/* Populated from item_data.c extern */
-extern const ItemDef g_item_defs[];
-extern const u8 g_item_def_count;
 
 /**
  * Initialize item system.

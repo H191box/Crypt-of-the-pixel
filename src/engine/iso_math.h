@@ -21,6 +21,7 @@
 #define ISO_MATH_H
 
 #include "gba_types.h"
+#include "system.h"  /* SCREEN_WIDTH, SCREEN_HEIGHT */
 
 /* ---- Tile dimensions (isometric diamond) ---- */
 #define TILE_W          16    /* Full width of isometric tile */

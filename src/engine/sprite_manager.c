@@ -22,7 +22,7 @@ static Sprite s_sprites[MAX_SPRITES];
 /* ---- Internal OAM buffer (written to OAM via DMA) ---- */
 /* 128 sprites × 3 attributes × 2 bytes = 768 bytes */
 /* Plus 16 affine parameter sets × 4 params × 2 bytes = 128 bytes */
-static u32 s_oam_buffer[128];
+static u32 s_oam_buffer[256];
 
 /* ---- Initialize ---- */
 void sprite_init(void) {
@@ -282,7 +282,7 @@ void sprite_load_tiles(const u8* data, u16 tile_idx, u16 tiles, u32 bytes) {
     /* Sprite VRAM starts at 0x06010000.
      * Each 4bpp tile is 32 bytes (8×8 pixels × 4 bits/pixel).
      * tile_idx * 32 gives the offset. */
-    void* dst = (void*)(VRAM_OBJ + tile_idx * 32);
+    void* dst = (void*)((u8*)VRAM_OBJ + tile_idx * 32);
     dma_to_vram(dst, data, bytes);
 }
 

@@ -38,9 +38,9 @@ static void render_inventory(void);
 static void render_game_over(void);
 static void render_victory(void);
 static void render_game_sprites(void);
-extern void load_all_palettes(void);
-extern void load_all_tiles(void);
-extern void load_all_sprites(void);
+#include "../assets/palettes.h"
+#include "../assets/tiles.h"
+#include "../assets/sprites.h"
 
 /* ---- Current state ---- */
 static GameState s_state = STATE_TITLE;
@@ -88,7 +88,7 @@ void game_init(void) {
     tilemap_init();
     sprite_init();
     text_init();
-    random_seed(42);
+    rand_seed(42);
     
     /* Init game subsystems */
     combat_init();
@@ -715,7 +715,7 @@ void game_new_game(u8 player_class) {
     enemy_init();
     items_init();
     
-    DungeonData* dung = dungeon_generate(s_dungeon_seed, s_floor_num);
+    dungeon_generate(s_dungeon_seed, s_floor_num);
     dungeon_place_tiles();
     
     /* Init player */
@@ -756,7 +756,7 @@ void game_next_floor(void) {
     enemy_init();
     items_init();
     
-    DungeonData* dung = dungeon_generate(s_dungeon_seed, s_floor_num);
+    dungeon_generate(s_dungeon_seed, s_floor_num);
     dungeon_place_tiles();
     
     /* Place player at new spawn */

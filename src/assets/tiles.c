@@ -306,7 +306,7 @@ void load_all_tiles(void) {
     
     /* Load normal tiles to BG char block 0 */
     for (int i = 0; i < NUM_TILE_TYPES; i++) {
-        void* dst = (void*)(VRAM + (i * 2) * GBA_TILE_BYTES);
+        void* dst = (void*)((u8*)VRAM + (i * 2) * GBA_TILE_BYTES);
         dma_to_vram(dst, tile_ptrs[i], ISO_TILE_BYTES);
     }
     
@@ -314,7 +314,7 @@ void load_all_tiles(void) {
     /* Dark variant: shift palette indices to darker colors */
     /* For simplicity, we just copy the same tiles with a palette remap */
     for (int i = 0; i < NUM_TILE_TYPES; i++) {
-        void* dst = (void*)(VRAM + 0x4000 + (i * 2) * GBA_TILE_BYTES);
+        void* dst = (void*)((u8*)VRAM + 0x4000 + (i * 2) * GBA_TILE_BYTES);
         dma_to_vram(dst, tile_ptrs[i], ISO_TILE_BYTES);
     }
     
@@ -376,7 +376,7 @@ static void generate_isometric_tiles(void) {
             
             /* Write to VRAM */
             u16 tile_idx = (1 + variant) * 2 + half;  /* Floor tiles start at index 2 */
-            void* dst = (void*)(VRAM + tile_idx * GBA_TILE_BYTES);
+            void* dst = (void*)((u8*)VRAM + tile_idx * GBA_TILE_BYTES);
             dma_to_vram(dst, tile_buf, 32);
         }
     }

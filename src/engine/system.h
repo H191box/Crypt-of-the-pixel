@@ -9,6 +9,7 @@
 #define SYSTEM_H
 
 #include "gba_types.h"
+#include "gba_header.h"  /* MODE_0, etc. */
 
 /* ---- Display mode we use ---- */
 #define SCREEN_MODE   MODE_0    /* 4 text BG layers for tile-based isometric */

@@ -99,4 +99,10 @@ void text_clear_all(void);
  */
 void text_draw_char(char ch, u8 tx, u8 ty, u8 color);
 
+/**
+ * Flush the text tilemap buffer to VRAM.
+ * Call after drawing text to make it visible on screen.
+ */
+void text_flush(void);
+
 #endif /* TEXT_RENDERER_H */

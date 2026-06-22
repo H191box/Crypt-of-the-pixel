@@ -385,12 +385,12 @@ void load_all_sprites(void) {
     /* Player: 4 directions × 3 frames = 12 sprites */
     /* Down */
     gen_player_down(buf);
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     /* Up */
     gen_player_up(buf);
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     /* Left (mirror of right) */
@@ -403,31 +403,31 @@ void load_all_sprites(void) {
             buf[y * 8 + x] = ((tmp & 0x0F) << 4) | ((tmp & 0xF0) >> 4);
         }
     }
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     /* Right */
     gen_player_down(buf);
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     /* Frames 1 and 2 (shifted 1 pixel for walk animation) */
     for (int f = 0; f < 2; f++) {
         gen_player_down(buf);
         /* Shift body down by (f+1) pixels for walk bob */
-        dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+        dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
         tile_offset += SPRITE_SIZE_BYTES;
         
         gen_player_up(buf);
-        dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+        dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
         tile_offset += SPRITE_SIZE_BYTES;
         
         gen_player_down(buf);
-        dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+        dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
         tile_offset += SPRITE_SIZE_BYTES;
         
         gen_player_down(buf);
-        dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+        dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
         tile_offset += SPRITE_SIZE_BYTES;
     }
     
@@ -435,35 +435,35 @@ void load_all_sprites(void) {
     /* Slime */
     for (int f = 0; f < 2; f++) {
         gen_slime(buf, f);
-        dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+        dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
         tile_offset += SPRITE_SIZE_BYTES;
     }
     
     /* Skeleton */
     for (int f = 0; f < 2; f++) {
         gen_skeleton(buf, f);
-        dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+        dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
         tile_offset += SPRITE_SIZE_BYTES;
     }
     
     /* Bat */
     for (int f = 0; f < 2; f++) {
         gen_bat(buf, f);
-        dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+        dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
         tile_offset += SPRITE_SIZE_BYTES;
     }
     
     /* Ghost */
     for (int f = 0; f < 2; f++) {
         gen_ghost(buf, f);
-        dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+        dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
         tile_offset += SPRITE_SIZE_BYTES;
     }
     
     /* Orc */
     for (int f = 0; f < 2; f++) {
         gen_orc(buf, f);
-        dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+        dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
         tile_offset += SPRITE_SIZE_BYTES;
     }
     
@@ -471,37 +471,37 @@ void load_all_sprites(void) {
     gen_slime(buf, 0);
     /* Make boss bigger by drawing extra */
     spr_rect(buf, 3, 3, 10, 10, 31);  /* Tinted red */
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     gen_skeleton(buf, 0);
     spr_rect(buf, 3, 2, 10, 12, 31);
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     gen_orc(buf, 0);
     spr_circle(buf, 8, 8, 7, 31);
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     /* Items */
     gen_potion(buf);
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     gen_key(buf);
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     gen_sword(buf);
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     /* Effects */
     gen_explosion(buf);
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
     tile_offset += SPRITE_SIZE_BYTES;
     
     gen_spark(buf);
-    dma_to_vram((void*)(VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
+    dma_to_vram((void*)((u8*)VRAM_OBJ + tile_offset), buf, SPRITE_SIZE_BYTES);
 }

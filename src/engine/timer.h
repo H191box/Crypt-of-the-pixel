@@ -25,6 +25,11 @@
 void timer_init(void);
 
 /**
+ * Update timer state (call once per frame).
+ */
+void timer_update(void);
+
+/**
  * Get the number of VBlank frames since timer_init().
  */
 u32 timer_get_frames(void);

@@ -35,7 +35,7 @@ extern const u8* font_get_tiles(void);
  * to leave room for game tile graphics. */
 #define FONT_TILE_BASE     512  /* Tile index in char block 0 */
 #define TEXT_MAP_BASE      31   /* Screen block for BG3 */
-#define TEXT_MAP_VRAM      (VRAM + 0xF800)
+#define TEXT_MAP_VRAM      ((u16*)((u8*)VRAM + 0xF800))
 
 /* ---- Internal buffer for text tilemap ---- */
 /* BG3 screen block is 32×32 = 1024 entries = 2048 bytes */
@@ -48,7 +48,7 @@ static u16 s_text_map[32 * 32];
 void text_init(void) {
     /* Copy font tiles to VRAM at FONT_TILE_BASE */
     const u8* tiles = font_get_tiles();
-    void* tile_dst = (void*)(VRAM + FONT_TILE_BASE * 32);
+    void* tile_dst = (void*)((u8*)VRAM + FONT_TILE_BASE * 32);
     dma_to_vram(tile_dst, tiles, FONT_CHAR_COUNT * 32);
     
     /* Copy font palette to palette bank 0 of BG palette */

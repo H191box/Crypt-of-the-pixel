@@ -245,7 +245,7 @@ void tilemap_render(void) {
     
     /* BG0 tilemap at VRAM screen base 28 = offset 0xE000 from VRAM start */
     /* Each entry is a 16-bit SE (screen entry): palette | tile_id */
-    u16* bg0_map = (u16*)(VRAM + 0xE000);
+    u16* bg0_map = (u16*)((u8*)VRAM + 0xE000);
     
     /* Clear the tilemap area we'll use (32x32 screen entries) */
     for (int i = 0; i < 32 * 32; i++) {
