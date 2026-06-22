@@ -20,8 +20,8 @@ SRC     = src
 INCLUDE = include
 
 # ---- Source files ----
-CFILES  := $(foreach dir,$(SRC),$(wildcard $(dir)/*.c))
-SFILES  := $(foreach dir,$(SRC),$(wildcard $(dir)/*.s))
+CFILES  := $(shell find $(SRC) -name '*.c')
+SFILES  := $(shell find $(SRC) -name '*.s')
 
 OFILES  := $(patsubst %.c,$(BUILD)/%.o,$(CFILES))
 OFILES  += $(patsubst %.s,$(BUILD)/%.o,$(SFILES))
