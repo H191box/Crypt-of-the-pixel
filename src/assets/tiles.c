@@ -37,6 +37,9 @@
 
 /* Helper: 4bpp pixel encoding
  * Each byte = 2 pixels: high nibble (left), low nibble (right) */
+/* Forward declaration (defined at end of file) */
+static void generate_isometric_tiles(void);
+
 #define PX(a,b) ((u8)(((a) << 4) | (b)))
 #define _       0  /* transparent */
 #define D       1  /* dark stone */
@@ -316,8 +319,6 @@ void load_all_tiles(void) {
     }
     
     /* Generate proper isometric floor tiles at runtime */
-    /* This creates proper diamond-shaped floor tiles in VRAM */
-    static void generate_isometric_tiles(void);
     generate_isometric_tiles();
 }
 
