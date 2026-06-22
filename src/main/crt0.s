@@ -1,9 +1,9 @@
 @ =============================================================================
-@ crt0.s — GBA Startup Code with embedded ROM header
+@ crt0.s — GBA Startup + ROM Header (pure ARM diagnostic)
 @ 
-@ Entry point: _start (ARM mode, placed at 0x08000000)
-@ The first 200 bytes are the GBA ROM header with Nintendo logo.
-@ After the header, real_start sets up the system and calls main().
+@ BUG FIX 1: Game title was "RYPTPIXELCTP" instead of "CRYPTPIXEL"
+@ BUG FIX 2: Complement check (0xBD) must make sum(0xA0..0xBC) = 0 mod 256
+@ BUG FIX 3: Mode 3 requires BG2 enable (bit 10) → REG_DISPCNT = 0x0403
 @ =============================================================================
 
     .section .text
@@ -11,11 +11,10 @@
     .arm
 
 _start:
-    @ ==== GBA ROM Header (200 bytes = 50 words) ====
-    @ Word 0: ARM branch to real_start (skip past header)
+    @ ==== GBA ROM Header (192 bytes at offset 0x00-0xBF) ====
     b       real_start
 
-    @ Words 1-39: Nintendo logo (156 bytes, required by BIOS)
+    @ Nintendo logo (156 bytes = 39 words, offset 0x04-0x9F)
     .word 0x24FFAE51, 0x699AA221, 0x3D84820A, 0x84E409AD
     .word 0x11248B98, 0xC0817F21, 0xA352BE19, 0x9309CE20
     .word 0x10464A4A, 0xF82731EC, 0x58C7E833, 0x82E3CEBF
@@ -27,61 +26,72 @@ _start:
     .word 0x780090CB, 0x88113A94, 0x65C07C63, 0x87F03CAF
     .word 0xD625E48B, 0x380AAC72, 0x21D4F807
 
-    @ Word 40: Game title "CRYPTPIXEL" (12 bytes) + "CTPX" (4 bytes) 
-    @ Packed as 4 bytes at a time: "RYPT" "PIXE" "LCTP" "X\0\0\0"
-    .ascii "RYPT"
-    .ascii "PIXE"
-    .ascii "LCTP"
-    .ascii "X\0\0\0"
+    @ Offset 0xA0: Game title "CRYPTPIXEL" (12 bytes)
+    .ascii "CRYP"
+    .ascii "TPIX"
+    .ascii "EL\0\0"
 
-    @ Word 44: Maker code "00" (2 bytes) + fixed 0x96 + main unit 0x00 + device 0x00
-    .byte 0x30, 0x30              @ Maker code "00"
-    .byte 0x96                    @ Fixed value
-    .byte 0x00                    @ Main unit code
-    .byte 0x00                    @ Device type
-    .byte 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  @ Reserved (7 bytes)
+    @ Offset 0xAC: Game code "CTPX" (4 bytes)
+    .ascii "CTPX"
 
-    @ Word 48: Version (1 byte) + Complement (1 byte) + Checksum (2 bytes)
-    .byte 0x00                    @ Version
-    .byte 0xB7                    @ Complement check (sum of 0xA0-0xBC must be 0)
-    .hword 0x0000                 @ Checksum (optional, 0 = skip)
+    @ Offset 0xB0: Maker code "00"
+    .byte 0x30, 0x30
 
-    @ ==== Real startup code begins here (offset ~200 bytes from ROM start) ====
+    @ Offset 0xB2: Fixed value 0x96
+    .byte 0x96
+
+    @ Offset 0xB3: Main unit code
+    .byte 0x00
+
+    @ Offset 0xB4: Device type
+    .byte 0x00
+
+    @ Offset 0xB5-0xBB: Reserved (7 bytes)
+    .byte 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+
+    @ Offset 0xBC: Version
+    .byte 0x00
+
+    @ Offset 0xBD: Complement check
+    @ Sum of bytes 0xA0-0xBC = 0x49. 0x49 + 0xB7 = 0x100 ≡ 0 mod 256.
+    .byte 0xB7
+
+    @ Offset 0xBE-0xBF: Checksum
+    .hword 0x0000
+
+    @ ==== Real code (offset 0xC0) ====
     .align 2
 real_start:
-    @ ---- Step 1: Set stack pointer ----
-    @ IWRAM: 0x03000000 - 0x03007FFF. SP at top, leaving room for BIOS.
-    ldr     sp, =0x03007F00
+    @ -- Enable Mode 3 + BG2 --
+    @ REG_DISPCNT = 0x0403 (Mode 3 = bits[2:0], BG2 = bit 10)
+    mov     r0, #0x04
+    mov     r0, r0, lsl #26        @ r0 = 0x04000000
+    mov     r1, #3                 @ Mode 3
+    mov     r2, #1
+    orr     r1, r1, r2, lsl #10    @ r1 = 3 | 0x0400 = 0x0403
+    str     r1, [r0, #0]
 
-    @ ---- Step 2: Copy .data from ROM to EWRAM ----
-    ldr     r0, =__data_load
-    ldr     r1, =__data_start
-    ldr     r2, =__data_end
-1:
-    cmp     r1, r2
-    bge     2f
-    ldr     r3, [r0], #4
-    str     r3, [r1], #4
-    b       1b
-2:
+    @ -- Fill VRAM with RED (Mode 3: 240x160, 16-bit pixels) --
+    @ 19200 32-bit writes cover entire framebuffer (38400 * 2 bytes)
+    @ Outer=150, Inner=128: 150*128 = 19200
+    mov     r3, #0x06
+    mov     r3, r3, lsl #26        @ r3 = 0x06000000 (VRAM)
+    mov     r4, #0x1F              @ Red
+    orr     r4, r4, r4, lsl #16    @ r4 = 0x001F001F
+    mov     r6, #0                 @ byte offset
 
-    @ ---- Step 3: Clear .bss ----
-    ldr     r0, =__bss_start
-    ldr     r1, =__bss_end
-    mov     r2, #0
-3:
-    cmp     r0, r1
-    bge     4f
-    str     r2, [r0], #4
-    b       3b
-4:
+    mov     r7, #150               @ outer count
 
-    @ ---- Step 4: Branch to main() (Thumb mode) ----
-    ldr     r0, =main
-    bx      r0
+outer_loop:
+    mov     r5, #128               @ inner count
+inner_loop:
+    str     r4, [r3, r6]
+    add     r6, r6, #4
+    subs    r5, r5, #1
+    bne     inner_loop
+    subs    r7, r7, #1
+    bne     outer_loop
 
-    @ ---- Hang if main returns ----
+    @ -- Hang --
 hang:
     b       hang
-
-    .ltorg
