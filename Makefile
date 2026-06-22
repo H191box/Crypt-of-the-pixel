@@ -36,7 +36,7 @@ MAP     = $(BUILD)/$(TARGET).map
 ARCH    = -mthumb-interwork -mthumb
 
 CFLAGS  = $(ARCH) -O2 -Wall -Wextra -Wno-unused-parameter
-CFLAGS += -I$(INCLUDE) -I$(SRC)
+CFLAGS += -I$(INCLUDE) $(shell find $(SRC) -type d -exec echo -I{} \;)
 CFLAGS += -ffreestanding -fno-builtin -fno-strict-aliasing
 CFLAGS += -fno-common -mlong-calls
 CFLAGS += -DGBA
